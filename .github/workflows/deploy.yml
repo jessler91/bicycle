@@ -1,0 +1,47 @@
+name: Deploy Bicycle Fit Explorer
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: bicycle-fit-explorer-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials through OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::427362718382:role/bicycle-github-deploy-role
+          aws-region: us-east-2
+
+      - name: Stage production files
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p deploy/vendor
+          cp index.html styles.css app.js deploy/
+          cp vendor/three.min.js deploy/vendor/
+
+      - name: Sync production files to S3
+        shell: bash
+        run: |
+          aws s3 sync deploy/ s3://jtecommerce-static-site/bicycle-fit-explorer/ --delete
+
+      - name: Invalidate Bicycle Fit Explorer in CloudFront
+        shell: bash
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id E24GCIUXBWADJI \
+            --paths '/bicycle-fit-explorer/*'
