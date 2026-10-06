@@ -1,0 +1,42 @@
+name: OIDC Identity Diagnostic
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  print-oidc-claims:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request and decode OIDC claims
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await core.getIDToken('sts.amazonaws.com');
+            const segments = token.split('.');
+
+            if (segments.length !== 3) {
+              core.setFailed('GitHub returned an invalid OIDC token format.');
+              return;
+            }
+
+            const claims = JSON.parse(
+              Buffer.from(segments[1], 'base64url').toString('utf8')
+            );
+
+            const requestedClaims = [
+              'sub',
+              'aud',
+              'repository',
+              'repository_id',
+              'repository_owner',
+              'repository_owner_id',
+              'ref',
+            ];
+
+            for (const claim of requestedClaims) {
+              core.info(`${claim}: ${JSON.stringify(claims[claim] ?? null)}`);
+            }
