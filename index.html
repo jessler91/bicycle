@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bicycle Fit Explorer</title>
+    <link rel="stylesheet" href="./styles.css?v=17" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand-lockup">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span>
+          <span></span>
+        </span>
+        <div>
+          <p class="eyebrow">Bicycle fit studio</p>
+          <h1>Fit Explorer</h1>
+        </div>
+      </div>
+      <nav class="tabs" aria-label="App sections">
+        <button class="tab is-active" type="button" data-page="fit">Fit Explorer</button>
+        <button class="tab" type="button" data-page="benefits">Cycling Benefits</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="page fit-page is-active" id="fit-page" aria-labelledby="fit-heading">
+        <div class="fit-top-area">
+          <div class="toolbar" aria-label="Bike presets">
+            <button class="preset is-active" type="button" data-preset="drops">Road drops</button>
+            <button class="preset" type="button" data-preset="tops">Road tops</button>
+            <button class="preset" type="button" data-preset="gravel">Gravel</button>
+            <button class="preset" type="button" data-preset="commuter">Commuter</button>
+            <button class="preset" type="button" data-preset="mtb">Mountain</button>
+            <button class="reset" type="button" id="reset-fit" aria-label="Reset fit">Reset</button>
+          </div>
+
+          <div class="fit-control-band">
+            <section class="adjustment-tray" aria-labelledby="adjustment-heading">
+              <div class="adjustment-heading-row">
+                <div>
+                  <p class="eyebrow">Live fit controls</p>
+                  <h2 id="adjustment-heading">Fine-tune the contact points</h2>
+                </div>
+                <span class="baseline-label" id="baseline-label">Road drops baseline</span>
+              </div>
+              <div class="adjustment-grid">
+                <label class="fit-control">
+                  <span><strong>Saddle height</strong><output data-fit-output="saddleHeight">0 mm</output></span>
+                  <input type="range" min="1.05" max="1.75" step="0.01" data-fit-control="saddleHeight" aria-label="Saddle height adjustment" />
+                </label>
+                <label class="fit-control">
+                  <span><strong>Saddle fore/aft</strong><output data-fit-output="saddleForeAft">0 mm</output></span>
+                  <input type="range" min="-0.37" max="0.03" step="0.01" data-fit-control="saddleForeAft" aria-label="Saddle fore and aft adjustment" />
+                </label>
+                <label class="fit-control">
+                  <span><strong>Handlebar height</strong><output data-fit-output="barHeight">0 mm</output></span>
+                  <input type="range" min="0.55" max="2.05" step="0.01" data-fit-control="barHeight" aria-label="Handlebar height adjustment" />
+                </label>
+                <label class="fit-control">
+                  <span><strong>Handlebar reach</strong><output data-fit-output="barReach">0 mm</output></span>
+                  <input type="range" min="0.40" max="1.75" step="0.01" data-fit-control="barReach" aria-label="Handlebar reach adjustment" />
+                </label>
+                <label class="fit-control">
+                  <span><strong>Crank length</strong><output data-fit-output="crankLength">172.5 mm</output></span>
+                  <input type="range" min="160" max="180" step="2.5" data-fit-control="crankLength" aria-label="Crank length adjustment" />
+                </label>
+              </div>
+            </section>
+
+            <section class="score-card" aria-label="Current posture signal">
+              <div class="score-row">
+                <span class="score-orbit"><span class="score-dot" id="score-dot"></span></span>
+                <div>
+                  <p class="eyebrow">Posture signal</p>
+                  <h2 id="score-label">Neutral learning zone</h2>
+                </div>
+              </div>
+
+              <div class="tuner" aria-hidden="true">
+                <span class="tuner-track"></span>
+                <span id="meter-fill" class="tuner-needle"></span>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div class="stage-column">
+          <section class="fit-stage" aria-labelledby="fit-heading">
+            <div class="stage-copy">
+              <div>
+                <p class="stage-kicker"><span></span> Interactive posture model</p>
+                <h2 id="fit-heading">See how the bike shapes the ride.</h2>
+              </div>
+              <p>Rotate the rider, choose a contact point, and explore how each setup changes posture.</p>
+            </div>
+
+            <div id="fit-scene" class="fit-scene" role="application" aria-label="3D bike fit explainer">
+              <div class="scene-status" aria-hidden="true">
+                <span class="status-pulse"></span>
+                Live posture map
+              </div>
+              <div class="view-controls" aria-label="3D view controls">
+                <button type="button" id="toggle-pedaling" aria-label="Start pedaling animation" aria-pressed="false" title="Start pedaling">
+                  <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l8 5-8 5z"/></svg>
+                  <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7v10M15 7v10"/></svg>
+                </button>
+                <button type="button" id="reset-camera" aria-label="Center 3D view" title="Center view">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5M7 12h10M12 7v10"/></svg>
+                </button>
+              </div>
+              <div class="scene-hint"><span class="mouse-icon" aria-hidden="true"></span><span><strong>Drag</strong> rotate&nbsp;&nbsp; <strong>Scroll</strong> zoom&nbsp;&nbsp; <strong>Click</strong> explore</span></div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="insight-panel" aria-label="Fit education">
+          <div class="insight-block">
+            <h3>Where do you feel discomfort?</h3>
+            <p class="signal-prompt">Choose a region to see what could reduce its load.</p>
+            <ul id="signal-list"></ul>
+          </div>
+        </aside>
+
+        <section class="detail-dock" aria-label="Selected fit guidance">
+          <div class="signal-detail" id="signal-detail">
+            <div class="detail-overview">
+              <p class="eyebrow">Signal detail</p>
+              <h3 id="detail-title">Body signal</h3>
+              <p id="detail-summary"></p>
+              <p class="detail-note" id="detail-note"></p>
+            </div>
+            <div class="detail-evidence">
+              <div class="detail-columns">
+                <div>
+                  <h4>What riders may feel</h4>
+                  <ul id="detail-feelings"></ul>
+                </div>
+                <div>
+                  <h4>Fit contributors</h4>
+                  <ul id="detail-contributors"></ul>
+                </div>
+              </div>
+              <h4>Contact points to experiment with</h4>
+              <div class="contact-tags" id="detail-contacts"></div>
+            </div>
+          </div>
+
+          <div class="dock-actions">
+            <div class="experiment-card" id="experiment-card">
+              <div>
+                <p class="eyebrow">Suggested experiment</p>
+                <h4 id="experiment-title">Try one small change</h4>
+                <p id="experiment-summary"></p>
+              </div>
+              <div class="experiment-actions" id="experiment-actions"></div>
+            </div>
+
+            <div class="panel-footer">
+            <div class="angle-grid">
+              <div>
+                <span id="torso-angle">0°</span>
+                <p>Torso</p>
+                <small id="torso-context">Above horizontal</small>
+              </div>
+              <div>
+                <span id="hip-angle">0°</span>
+                <p>Hip</p>
+                <small id="hip-context">Front-of-hip opening</small>
+              </div>
+              <div>
+                <span id="knee-angle">0°</span>
+                <p>Knee</p>
+                <small id="knee-context">At bottom of stroke</small>
+              </div>
+            </div>
+            <p class="angle-help" id="angle-help">Higher torso and hip angles mean a more upright, open posture. Knee angle describes extension near the bottom of the pedal stroke.</p>
+            <p class="disclaimer">Educational model only. A professional fitter or clinician can account for body proportions, mobility, injury history, and riding goals.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="page benefits-page" id="benefits-page" aria-labelledby="benefits-heading">
+        <div class="benefits-hero">
+          <p class="eyebrow">Why cycling helps</p>
+          <h2 id="benefits-heading">A better bike position can make the benefits easier to enjoy.</h2>
+          <p>Cycling can be transport, exercise, recovery, exploration, and quiet time. Good fit education helps riders notice comfort signals earlier and ride more consistently.</p>
+        </div>
+
+        <div class="benefit-grid">
+          <article>
+            <span class="benefit-icon">+</span>
+            <h3>Heart and endurance</h3>
+            <p>Regular riding can support aerobic fitness while letting effort scale from gentle spins to structured training.</p>
+          </article>
+          <article>
+            <span class="benefit-icon">↕</span>
+            <h3>Joint-friendly movement</h3>
+            <p>Pedaling is low impact for many riders, and fit awareness can reduce avoidable knee, hand, neck, and back irritation.</p>
+          </article>
+          <article>
+            <span class="benefit-icon">◐</span>
+            <h3>Mental reset</h3>
+            <p>Rhythm, outdoor light, and route choice can make cycling a practical way to decompress and rebuild focus.</p>
+          </article>
+          <article>
+            <span class="benefit-icon">⌂</span>
+            <h3>Everyday mobility</h3>
+            <p>Bikes can turn errands and commutes into useful movement, often with less cost and less friction than car-only trips.</p>
+          </article>
+        </div>
+
+        <section class="compare-band" aria-labelledby="compare-heading">
+          <h3 id="compare-heading">Different bikes ask different things from the body</h3>
+          <div class="compare-row">
+            <div>
+              <strong>Road drops</strong>
+              <p>Often faster and lower. May increase low back, neck, and hand demand when the reach is long or bars are low.</p>
+            </div>
+            <div>
+              <strong>Road tops</strong>
+              <p>Usually more open and relaxed than the drops. May reduce back demand while giving up some aero position.</p>
+            </div>
+            <div>
+              <strong>Commuter</strong>
+              <p>More upright and easy to scan traffic. May reduce hand pressure but can shift more load onto the saddle.</p>
+            </div>
+            <div>
+              <strong>Mountain</strong>
+              <p>Stable and ready for terrain. May feel wider through the shoulders and more dynamic through hips and knees.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="./vendor/three.min.js"></script>
+    <script src="./app.js?v=33"></script>
+  </body>
+</html>
